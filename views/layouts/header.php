@@ -77,6 +77,14 @@
                         <i class='bx bx-package text-xl'></i>
                         <span class="font-medium">Stok</span>
                     </a>
+                    <a href="?page=customer" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors touch-button">
+                        <i class='bx bx-user text-xl'></i>
+                        <span class="font-medium">Customer</span>
+                    </a>
+                    <a href="?page=supplier" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors touch-button">
+                        <i class='bx bx-store text-xl'></i>
+                        <span class="font-medium">Supplier</span>
+                    </a>
                     <a href="?page=pembelian" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors touch-button">
                         <i class='bx bx-cart text-xl'></i>
                         <span class="font-medium">Pembelian</span>
@@ -96,6 +104,10 @@
                     <a href="?page=profil" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors touch-button">
                         <i class='bx bx-building text-xl'></i>
                         <span class="font-medium">Profil</span>
+                    </a>
+                    <a href="?page=coa" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors touch-button">
+                        <i class='bx bx-list-ul text-xl'></i>
+                        <span class="font-medium">COA</span>
                     </a>
                 </nav>
                 
@@ -133,6 +145,16 @@
                             <i class='bx bx-package text-xl mr-3'></i>
                             Stok
                         </a>
+
+                        <a href="?page=customer" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'customer' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
+                            <i class='bx bx-user text-xl mr-3'></i>
+                            Customer
+                        </a>
+
+                        <a href="?page=supplier" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'supplier' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
+                            <i class='bx bx-store text-xl mr-3'></i>
+                            Supplier
+                        </a>
                         
                         <a href="?page=pembelian" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'pembelian' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
                             <i class='bx bx-cart text-xl mr-3'></i>
@@ -157,6 +179,10 @@
                         <a href="?page=profil" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'profil' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
                             <i class='bx bx-building text-xl mr-3'></i>
                             Profil
+                        </a>
+                        <a href="?page=coa" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'coa' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
+                            <i class='bx bx-list-ul text-xl mr-3'></i>
+                            COA
                         </a>
 </nav>
                 </div>

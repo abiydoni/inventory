@@ -26,11 +26,29 @@ try {
     }
 }
 
-// Load header (sudah include definisi $page)
-include __DIR__ . '/views/layouts/header.php';
-
-// Load content berdasarkan $page yang sudah didefinisikan di header
+// Tentukan halaman
+$page = $_GET['page'] ?? 'dashboard';
+$allowedPages = ['dashboard', 'stok', 'customer', 'supplier', 'pembelian', 'penjualan', 'jurnal', 'laporan', 'profil', 'coa'];
+if (!in_array($page, $allowedPages)) {
+    $page = 'dashboard';
+}
 $path = __DIR__ . "/views/{$page}/index.php";
+
+// Jika ini request API (aksi), langsung delegasikan ke view tanpa header/footer
+if (isset($_GET['aksi'])) {
+    if (file_exists($path)) {
+        include $path; // view bertanggung jawab mengirim JSON dan exit
+        exit;
+    } else {
+        header('Content-Type: application/json');
+        http_response_code(404);
+        echo json_encode(['status' => 'error', 'message' => 'Endpoint tidak ditemukan']);
+        exit;
+    }
+}
+
+// Render normal (HTML)
+include __DIR__ . '/views/layouts/header.php';
 if (file_exists($path)) {
     include $path;
 } else {
@@ -40,7 +58,5 @@ if (file_exists($path)) {
             <p>Halaman <strong>" . htmlspecialchars($page) . "</strong> tidak tersedia.</p>
           </div>";
 }
-
-// Load footer
 include __DIR__ . '/views/layouts/footer.php';
 ?>

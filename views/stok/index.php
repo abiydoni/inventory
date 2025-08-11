@@ -257,36 +257,39 @@ $rows = $db->fetchAll("SELECT * FROM stok $whereClause ORDER BY id DESC LIMIT ? 
 <script>
 function performSearch() {
     const search = document.getElementById('searchInput').value;
-    if (search.trim()) {
-        location.href = `?page=stok&search=${encodeURIComponent(search)}`;
-    }
+    location.href = `?page=stok&search=${encodeURIComponent(search)}`;
 }
 
 function openTambah() {
+    // Generate kode otomatis 10 digit
+    function generateKode() {
+        const timestamp = Date.now().toString();
+        const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+        return (timestamp + random).slice(-10);
+    }
+    
   Swal.fire({
         title: 'Tambah Produk Baru',
     html: `
             <form id="tambahForm" class="text-left space-y-4">
                 <input type="hidden" id="csrf_token" value="<?php echo $csrf_token; ?>">
-                
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Kode Produk *</label>
-                    <input type="text" id="kode" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                    <input type="text" id="kode" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" readonly required>
+                    <p class="text-xs text-gray-500 mt-1">Kode akan otomatis 10 digit</p>
                 </div>
-                
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nama Produk *</label>
-                    <input type="text" id="nama" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                    <input type="text" id="nama" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
                 </div>
-                
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Stok *</label>
-                        <input type="number" id="stok" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                        <input type="number" id="stok" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Harga *</label>
-                        <input type="number" id="harga" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                        <input type="number" id="harga" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
                     </div>
                 </div>
             </form>
@@ -295,6 +298,10 @@ function openTambah() {
         confirmButtonText: 'Simpan',
         cancelButtonText: 'Batal',
         width: '500px',
+        didOpen: () => {
+            // Set kode otomatis saat modal dibuka
+            document.getElementById('kode').value = generateKode();
+        },
     preConfirm: () => {
             const formData = new FormData();
             formData.append('action', 'tambah');
@@ -303,20 +310,14 @@ function openTambah() {
             formData.append('nama', document.getElementById('nama').value);
             formData.append('stok', document.getElementById('stok').value);
             formData.append('harga', document.getElementById('harga').value);
-            
-            return fetch('?page=stok&aksi=api', {
-                method: 'POST',
-                body: formData
-            }).then(r => r.json()).catch(() => {
-                Swal.showValidationMessage('Request error');
-            });
+            return fetch('api/stok.php', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .catch(() => { Swal.showValidationMessage('Request error'); });
         }
     }).then((result) => {
         if (result.isConfirmed) {
             if (result.value.status === 'success') {
-                Swal.fire('Sukses!', result.value.message, 'success').then(() => {
-                    location.reload();
-                });
+                Swal.fire('Sukses!', result.value.message, 'success').then(() => { location.reload(); });
             } else {
                 Swal.fire('Error!', result.value.message, 'error');
             }
@@ -325,36 +326,34 @@ function openTambah() {
 }
 
 function edit(id) {
-    fetch('?page=stok&aksi=get&id=' + id + '&token=<?php echo $csrf_token; ?>')
+    fetch(`api/stok.php?action=get&id=${id}&token=<?php echo $csrf_token; ?>`)
         .then(r => r.json())
         .then(d => {
-            if (!d) return Swal.fire('Error', 'Data tidak ditemukan', 'error');
-            
+            if (!d || d.status === 'error') {
+                return Swal.fire('Error', d && d.message ? d.message : 'Data tidak ditemukan', 'error');
+            }
     Swal.fire({
                 title: 'Edit Produk',
                 html: `
                     <form id="editForm" class="text-left space-y-4">
                         <input type="hidden" id="csrf_token" value="<?php echo $csrf_token; ?>">
                         <input type="hidden" id="id" value="${id}">
-                        
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Kode Produk *</label>
-                            <input type="text" id="kode" value="${d.kode}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                            <input type="text" id="kode" value="${d.kode}" class="w-full px-3 py-2 border border-gray-300 rounded-lg" readonly required>
                         </div>
-                        
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Nama Produk *</label>
-                            <input type="text" id="nama" value="${d.nama}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                            <input type="text" id="nama" value="${d.nama}" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
                         </div>
-                        
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Stok *</label>
-                                <input type="number" id="stok" value="${d.stok}" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                                <input type="number" id="stok" value="${d.stok}" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Harga *</label>
-                                <input type="number" id="harga" value="${d.harga}" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                                <input type="number" id="harga" value="${d.harga}" min="0" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
                             </div>
                         </div>
                     </form>
@@ -372,24 +371,21 @@ function edit(id) {
                     formData.append('nama', document.getElementById('nama').value);
                     formData.append('stok', document.getElementById('stok').value);
                     formData.append('harga', document.getElementById('harga').value);
-                    
-                    return fetch('?page=stok&aksi=api', {
-                        method: 'POST',
-                        body: formData
-                    }).then(r => r.json());
+                    return fetch('api/stok.php', { method: 'POST', body: formData })
+                        .then(r => r.json())
+                        .catch(() => { Swal.showValidationMessage('Request error'); });
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
                     if (result.value.status === 'success') {
-                        Swal.fire('Sukses!', result.value.message, 'success').then(() => {
-                            location.reload();
-                        });
+                        Swal.fire('Sukses!', result.value.message, 'success').then(() => { location.reload(); });
                     } else {
                         Swal.fire('Error!', result.value.message, 'error');
                     }
                 }
             });
-        });
+        })
+        .catch(() => Swal.fire('Error', 'Gagal memuat data produk', 'error'));
 }
 
 function hapus(id) {
@@ -417,96 +413,3 @@ document.getElementById('searchInput').addEventListener('keypress', function(e) 
     }
 });
 </script>
-
-<!-- API Handler -->
-<?php
-if (isset($_GET['aksi']) && $_GET['aksi'] == 'api') {
-    try {
-        if (!Helper::validateCSRF($_POST['csrf_token'] ?? '')) {
-            throw new Exception('Invalid CSRF token');
-        }
-        
-        $action = $_POST['action'] ?? '';
-        
-        if ($action === 'tambah') {
-            // Validasi input
-            $kode = $_POST['kode'] ?? '';
-            $nama = $_POST['nama'] ?? '';
-            $stok = $_POST['stok'] ?? '';
-            $harga = $_POST['harga'] ?? '';
-            
-            if (!Helper::validateRequired($kode)) throw new Exception('Kode produk wajib diisi');
-            if (!Helper::validateRequired($nama)) throw new Exception('Nama produk wajib diisi');
-            if (!Helper::validateNumber($stok)) throw new Exception('Stok harus berupa angka positif');
-            if (!Helper::validateNumber($harga)) throw new Exception('Harga harus berupa angka positif');
-            
-            // Cek kode unik
-            $existing = $db->fetch("SELECT id FROM stok WHERE kode = ?", [Helper::sanitize($kode)]);
-            if ($existing) throw new Exception('Kode produk sudah digunakan');
-            
-            // Insert
-            $db->execute("INSERT INTO stok (kode, nama, stok, harga) VALUES (?, ?, ?, ?)", [
-                Helper::sanitize($kode),
-                Helper::sanitize($nama),
-                (int)$stok,
-                (int)$harga
-            ]);
-            
-            Helper::jsonResponse(Helper::successResponse('Produk berhasil ditambahkan'));
-            
-        } elseif ($action === 'edit') {
-            $id = (int)($_POST['id'] ?? 0);
-            $kode = $_POST['kode'] ?? '';
-            $nama = $_POST['nama'] ?? '';
-            $stok = $_POST['stok'] ?? '';
-            $harga = $_POST['harga'] ?? '';
-            
-            if (!Helper::validateRequired($kode)) throw new Exception('Kode produk wajib diisi');
-            if (!Helper::validateRequired($nama)) throw new Exception('Nama produk wajib diisi');
-            if (!Helper::validateNumber($stok)) throw new Exception('Stok harus berupa angka positif');
-            if (!Helper::validateNumber($harga)) throw new Exception('Harga harus berupa angka positif');
-            
-            // Cek kode unik (kecuali untuk produk yang sedang diedit)
-            $existing = $db->fetch("SELECT id FROM stok WHERE kode = ? AND id != ?", [Helper::sanitize($kode), $id]);
-            if ($existing) throw new Exception('Kode produk sudah digunakan');
-            
-            // Update
-            $db->execute("UPDATE stok SET kode = ?, nama = ?, stok = ?, harga = ? WHERE id = ?", [
-                Helper::sanitize($kode),
-                Helper::sanitize($nama),
-                (int)$stok,
-                (int)$harga,
-                $id
-            ]);
-            
-            Helper::jsonResponse(Helper::successResponse('Produk berhasil diperbarui'));
-            
-        } else {
-            throw new Exception('Action tidak valid');
-        }
-        
-    } catch (Exception $e) {
-        Helper::jsonResponse(Helper::errorResponse($e->getMessage()));
-    }
-}
-
-if (isset($_GET['aksi']) && $_GET['aksi'] == 'get' && isset($_GET['id'])) {
-    try {
-        if (!Helper::validateCSRF($_GET['token'] ?? '')) {
-            throw new Exception('Invalid CSRF token');
-        }
-        
-        $id = (int)$_GET['id'];
-        $row = $db->fetch("SELECT * FROM stok WHERE id = ?", [$id]);
-        
-        if (!$row) {
-            Helper::jsonResponse(Helper::errorResponse('Data tidak ditemukan'));
-        }
-        
-        Helper::jsonResponse($row);
-        
-    } catch (Exception $e) {
-        Helper::jsonResponse(Helper::errorResponse($e->getMessage()));
-    }
-}
-?>
