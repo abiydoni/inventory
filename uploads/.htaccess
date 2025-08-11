@@ -1,0 +1,7 @@
+# Disable PHP execution in uploads
+<FilesMatch "\.php$">
+    Require all denied
+</FilesMatch>
+
+# (Optional) Prevent script execution
+Options -ExecCGI
