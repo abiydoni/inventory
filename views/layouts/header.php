@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
+<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <title><?php echo APP_NAME; ?> - Sistem Inventori Modern</title>
     
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com"></script>
     
     <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <!-- Boxicons - Latest Version -->
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -107,7 +107,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+      </div>
     </div>
 
     <!-- Main Layout -->
@@ -158,7 +158,7 @@
                             <i class='bx bx-building text-xl mr-3'></i>
                             Profil
                         </a>
-                    </nav>
+</nav>
                 </div>
                 
                 <!-- Footer Sidebar -->
