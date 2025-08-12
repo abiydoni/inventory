@@ -90,8 +90,16 @@
                         <span class="font-medium">Pembelian</span>
                     </a>
                     <a href="?page=penjualan" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors touch-button">
-                        <i class='bx bx-shopping-bag text-xl'></i>
+                        <i class='bx bx-cart text-xl'></i>
                         <span class="font-medium">Penjualan</span>
+                    </a>
+                    <a href="?page=hutang" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors touch-button">
+                        <i class='bx bx-credit-card text-xl'></i>
+                        <span class="font-medium">Hutang</span>
+                    </a>
+                    <a href="?page=piutang" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors touch-button">
+                        <i class='bx bx-money text-xl'></i>
+                        <span class="font-medium">Piutang</span>
                     </a>
                     <a href="?page=jurnal" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors touch-button">
                         <i class='bx bx-book text-xl'></i>
@@ -135,54 +143,54 @@
                         <h1 class="text-xl font-bold text-gray-800"><?php echo APP_NAME; ?></h1>
                     </div>
                     
-                    <nav class="mt-5 flex-1 px-3 space-y-1">
+                    <nav class="space-y-1">
                         <a href="?page=dashboard" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'dashboard' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
                             <i class='bx bx-home text-xl mr-3'></i>
                             Dashboard
                         </a>
-                        
                         <a href="?page=stok" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'stok' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
                             <i class='bx bx-package text-xl mr-3'></i>
                             Stok
                         </a>
-
                         <a href="?page=customer" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'customer' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
                             <i class='bx bx-user text-xl mr-3'></i>
                             Customer
                         </a>
-
                         <a href="?page=supplier" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'supplier' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
-                            <i class='bx bx-store text-xl mr-3'></i>
+                            <i class='bx bx-truck text-xl mr-3'></i>
                             Supplier
                         </a>
-                        
                         <a href="?page=pembelian" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'pembelian' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
-                            <i class='bx bx-cart text-xl mr-3'></i>
+                            <i class='bx bx-cart-add text-xl mr-3'></i>
                             Pembelian
                         </a>
-                        
                         <a href="?page=penjualan" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'penjualan' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
-                            <i class='bx bx-shopping-bag text-xl mr-3'></i>
+                            <i class='bx bx-cart text-xl mr-3'></i>
                             Penjualan
                         </a>
-                        
+                        <a href="?page=hutang" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'hutang' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
+                            <i class='bx bx-credit-card text-xl mr-3'></i>
+                            Hutang
+                        </a>
+                        <a href="?page=piutang" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'piutang' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
+                            <i class='bx bx-money text-xl mr-3'></i>
+                            Piutang
+                        </a>
                         <a href="?page=jurnal" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'jurnal' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
                             <i class='bx bx-book text-xl mr-3'></i>
                             Jurnal
                         </a>
-                        
                         <a href="?page=laporan" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'laporan' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
                             <i class='bx bx-chart text-xl mr-3'></i>
                             Laporan
                         </a>
-                        
+                        <a href="?page=coa" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'coa' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
+                            <i class='bx bx-book-bookmark text-xl mr-3'></i>
+                            COA
+                        </a>
                         <a href="?page=profil" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'profil' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
                             <i class='bx bx-building text-xl mr-3'></i>
                             Profil
-                        </a>
-                        <a href="?page=coa" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'coa' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
-                            <i class='bx bx-list-ul text-xl mr-3'></i>
-                            COA
                         </a>
 </nav>
                 </div>

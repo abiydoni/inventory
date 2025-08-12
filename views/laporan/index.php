@@ -216,7 +216,7 @@ try {
             <h3 class="text-lg font-semibold text-gray-800">Ringkasan Entri Jurnal</h3>
         </div>
         <div class="p-6">
-            <?php
+  <?php
             try {
                 $total_jurnal = (int)($db->fetch("SELECT COUNT(*) as total FROM jurnal WHERE $where", $params)['total'] ?? 0);
                 $total_debit = (int)($db->fetch("SELECT COALESCE(SUM(debit),0) as total FROM jurnal WHERE $where", $params)['total'] ?? 0);

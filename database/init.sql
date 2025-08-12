@@ -125,6 +125,8 @@ CREATE TABLE pembelian (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   tanggal TEXT,
   supplier_id INTEGER,
+  jenis_pembayaran TEXT DEFAULT 'cash',
+  status_pembayaran TEXT DEFAULT 'lunas',
   subtotal INTEGER,
   diskon INTEGER DEFAULT 0, -- percent or fixed? we'll use percent
   pajak INTEGER DEFAULT 0, -- percent
@@ -149,6 +151,8 @@ CREATE TABLE penjualan (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   tanggal TEXT,
   customer_id INTEGER,
+  jenis_pembayaran TEXT DEFAULT 'cash',
+  status_pembayaran TEXT DEFAULT 'lunas',
   subtotal INTEGER,
   diskon INTEGER DEFAULT 0, -- percent
   pajak INTEGER DEFAULT 0, -- percent

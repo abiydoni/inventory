@@ -28,7 +28,7 @@ try {
 
 // Tentukan halaman
 $page = $_GET['page'] ?? 'dashboard';
-$allowedPages = ['dashboard', 'stok', 'customer', 'supplier', 'pembelian', 'penjualan', 'jurnal', 'laporan', 'profil', 'coa'];
+$allowedPages = ['dashboard', 'stok', 'customer', 'supplier', 'pembelian', 'penjualan', 'hutang', 'piutang', 'jurnal', 'laporan', 'profil', 'coa'];
 if (!in_array($page, $allowedPages)) {
     $page = 'dashboard';
 }
