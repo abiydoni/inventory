@@ -127,7 +127,7 @@ function openTambah(){
       fd.append('tipe', document.getElementById('tipe').value);
       fd.append('laporan', document.getElementById('laporan').value);
       fd.append('aktif', document.getElementById('aktif').value);
-      return fetch('api/coa.php', {method:'POST', body: fd}).then(r=>r.json()).catch(()=>{
+      return fetch('views/coa/api.php', {method:'POST', body: fd}).then(r=>r.json()).catch(()=>{
         Swal.showValidationMessage('Request error');
       });
     }
@@ -143,7 +143,7 @@ function openTambah(){
 }
 
 function edit(id){
-  fetch(`api/coa.php?action=get&id=${id}&token=<?php echo $csrf_token; ?>`).then(r=>r.json()).then(d=>{
+  fetch(`views/coa/api.php?action=get&id=${id}&token=<?php echo $csrf_token; ?>`).then(r=>r.json()).then(d=>{
     if(!d || d.status==='error') return Swal.fire('Error', d.message||'Data tidak ditemukan', 'error');
     Swal.fire({
       title: 'Edit Akun',
@@ -197,7 +197,7 @@ function edit(id){
         fd.append('tipe', document.getElementById('tipe').value);
         fd.append('laporan', document.getElementById('laporan').value);
         fd.append('aktif', document.getElementById('aktif').value);
-        return fetch('api/coa.php', {method:'POST', body: fd}).then(r=>r.json()).catch(()=>{
+        return fetch('views/coa/api.php', {method:'POST', body: fd}).then(r=>r.json()).catch(()=>{
           Swal.showValidationMessage('Request error');
         });
       }
@@ -220,7 +220,7 @@ function hapus(id){
       fd.append('action','hapus');
       fd.append('csrf_token','<?php echo $csrf_token; ?>');
       fd.append('id', id);
-      fetch('api/coa.php', {method:'POST', body: fd}).then(r=>r.json()).then(d=>{
+      fetch('views/coa/api.php', {method:'POST', body: fd}).then(r=>r.json()).then(d=>{
         if(d.status==='success'){
           Swal.fire('Sukses','Akun dihapus','success').then(()=>location.reload());
         }else{

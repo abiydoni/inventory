@@ -28,7 +28,7 @@ try {
 
 // Tentukan halaman
 $page = $_GET['page'] ?? 'dashboard';
-$allowedPages = ['dashboard', 'stok', 'customer', 'supplier', 'pembelian', 'penjualan', 'hutang', 'piutang', 'jurnal', 'laporan', 'profil', 'coa'];
+$allowedPages = ['dashboard', 'stok', 'customer', 'supplier', 'pembelian', 'penjualan', 'hutang', 'piutang', 'jurnal', 'laporan', 'profil', 'coa', 'settings'];
 if (!in_array($page, $allowedPages)) {
     $page = 'dashboard';
 }
@@ -50,6 +50,8 @@ if (isset($_GET['aksi'])) {
 // Render normal (HTML)
 include __DIR__ . '/views/layouts/header.php';
 if (file_exists($path)) {
+    // Make database connection available to views
+    global $db;
     include $path;
 } else {
     echo "<div class='text-center mt-10 text-gray-600'>

@@ -105,7 +105,7 @@ CREATE TABLE profil_perusahaan (
 
 -- Insert default company profile
 INSERT INTO profil_perusahaan (id, nama, alamat, telepon, email) 
-VALUES (1, 'Nama Perusahaan Anda', 'Alamat Perusahaan', '08123456789', 'info@perusahaan.com');
+VALUES (1, 'appsBee', 'Jl. Dworowati No.3, Randuares RT.07 RW.07 Salatiga', '085225106200', 'abiydoni@gmail.com');
 
 -- Insert sample data
 INSERT OR IGNORE INTO stok (kode, nama, stok, harga) VALUES 
@@ -172,7 +172,7 @@ CREATE TABLE penjualan_detail (
   FOREIGN KEY(stok_id) REFERENCES stok(id) ON DELETE SET NULL
 );
 
--- Tabel jurnal (tambahkan coa_id agar entri bisa diklasifikasikan)
+-- Tabel jurnal (gunakan coa_kode untuk klasifikasi yang lebih stabil)
 CREATE TABLE IF NOT EXISTS jurnal (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   tanggal TEXT,
@@ -180,7 +180,62 @@ CREATE TABLE IF NOT EXISTS jurnal (
   debit INTEGER DEFAULT 0,
   kredit INTEGER DEFAULT 0,
   keterangan TEXT,
-  coa_id INTEGER NULL,
+  coa_kode TEXT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabel settings untuk menyimpan mapping COA penting aplikasi
+CREATE TABLE IF NOT EXISTS settings (
+  key TEXT PRIMARY KEY,
+  value INTEGER NULL,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY(value) REFERENCES coa(id) ON DELETE SET NULL
+);
+
+-- Default mapping settings COA (gunakan subquery berdasarkan kode akun)
+INSERT OR IGNORE INTO settings (key, value) VALUES
+  ('akun_persediaan', (SELECT id FROM coa WHERE kode = '1-130')),
+  ('akun_kas', (SELECT id FROM coa WHERE kode = '1-100')),
+  ('akun_bank', (SELECT id FROM coa WHERE kode = '1-110')),
+  ('akun_piutang', (SELECT id FROM coa WHERE kode = '1-120')),
+  ('akun_hutang', (SELECT id FROM coa WHERE kode = '2-100')),
+  ('akun_pendapatan_penjualan', (SELECT id FROM coa WHERE kode = '4-100')),
+  ('akun_hpp', (SELECT id FROM coa WHERE kode = '5-100')),
+  ('akun_beban_administrasi', (SELECT id FROM coa WHERE kode = '6-180')),
+  ('penjualan_persediaan', (SELECT id FROM coa WHERE kode = '1-130')),
+  ('pembelian_persediaan', (SELECT id FROM coa WHERE kode = '1-130')),
+  ('penjualan_piutang', (SELECT id FROM coa WHERE kode = '1-120')),
+  ('pembelian_hutang', (SELECT id FROM coa WHERE kode = '2-100')),
+  -- Template jurnal override (boleh NULL untuk fallback aturan default)
+  ('pembayaran_hutang_debet', (SELECT id FROM coa WHERE kode = '2-100')),
+  ('pembayaran_hutang_kredit', NULL),
+  ('pembayaran_piutang_debet', NULL),
+  ('pembayaran_piutang_kredit', (SELECT id FROM coa WHERE kode = '1-120'));
+
+-- Tabel pembayaran hutang (pembelian kredit)
+CREATE TABLE IF NOT EXISTS pembayaran_hutang (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  pembelian_id INTEGER NOT NULL,
+  tanggal TEXT NOT NULL,
+  metode TEXT CHECK(metode IN ('kas','bank')) NOT NULL,
+  akun_kas_bank INTEGER NULL,
+  nominal INTEGER NOT NULL,
+  keterangan TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY(coa_id) REFERENCES coa(id) ON DELETE SET NULL
+  FOREIGN KEY(pembelian_id) REFERENCES pembelian(id) ON DELETE CASCADE,
+  FOREIGN KEY(akun_kas_bank) REFERENCES coa(id) ON DELETE SET NULL
+);
+
+-- Tabel pembayaran piutang (penjualan kredit)
+CREATE TABLE IF NOT EXISTS pembayaran_piutang (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  penjualan_id INTEGER NOT NULL,
+  tanggal TEXT NOT NULL,
+  metode TEXT CHECK(metode IN ('kas','bank')) NOT NULL,
+  akun_kas_bank INTEGER NULL,
+  nominal INTEGER NOT NULL,
+  keterangan TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY(penjualan_id) REFERENCES penjualan(id) ON DELETE CASCADE,
+  FOREIGN KEY(akun_kas_bank) REFERENCES coa(id) ON DELETE SET NULL
 );

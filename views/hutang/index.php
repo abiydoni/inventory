@@ -1,5 +1,6 @@
 <?php
 // Halaman hutang: daftar hutang usaha dari pembelian kredit
+$csrf_token = Helper::generateCSRF();
 $search = $_GET['search'] ?? '';
 $status = $_GET['status'] ?? '';
 
@@ -204,7 +205,7 @@ function lihatDetail(id) {
         showConfirmButton: false,
         didOpen: () => {
             // Fetch detail pembelian
-            fetch(`api/pembelian.php?action=get&id=${id}`)
+            fetch(`views/pembelian/api.php?action=get&id=${id}`)
                 .then(r => r.json())
                 .then(data => {
                     if (data.status === 'success') {
@@ -254,34 +255,49 @@ function lihatDetail(id) {
 
 function bayarHutang(id) {
     Swal.fire({
-        title: 'Bayar Hutang?',
-        text: 'Apakah Anda yakin ingin menandai hutang ini sebagai lunas?',
-        icon: 'question',
+        title: 'Pembayaran Hutang',
+        html: `
+            <div class="text-left space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nominal</label>
+                <input type="number" id="nominal" min="1" class="w-full px-3 py-2 border rounded-lg" required>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Metode</label>
+                <select id="metode" class="w-full px-3 py-2 border rounded-lg">
+                  <option value="kas">Kas</option>
+                  <option value="bank">Bank</option>
+                </select>
+              </div>
+            </div>
+        `,
         showCancelButton: true,
-        confirmButtonText: 'Ya, Lunas',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
+        confirmButtonText: 'Bayar',
+        cancelButtonText: 'Batal',
+        preConfirm: () => {
+            const nominal = parseInt(document.getElementById('nominal').value || '0', 10);
+            const metode = document.getElementById('metode').value;
+            if (!nominal || nominal <= 0) {
+              Swal.showValidationMessage('Nominal tidak valid');
+              return false;
+            }
             const formData = new FormData();
             formData.append('action', 'bayar_hutang');
+            formData.append('csrf_token', '<?php echo $csrf_token; ?>');
             formData.append('id', id);
-            
-            fetch('api/pembelian.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    Swal.fire('Sukses', 'Hutang berhasil dilunasi', 'success')
-                        .then(() => location.reload());
-                } else {
-                    Swal.fire('Error', data.message || 'Gagal melunasi hutang', 'error');
-                }
-            })
-            .catch(() => {
-                Swal.fire('Error', 'Terjadi kesalahan', 'error');
-            });
+            formData.append('nominal', nominal);
+            formData.append('metode', metode);
+            return fetch('views/pembelian/api.php', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .catch(() => { Swal.showValidationMessage('Request error'); });
+        }
+    }).then((res) => {
+        if (res.isConfirmed) {
+            if (res.value && res.value.status === 'success') {
+                Swal.fire('Sukses', res.value.message, 'success').then(() => location.reload());
+            } else {
+                Swal.fire('Error', (res.value && res.value.message) || 'Gagal melunasi hutang', 'error');
+            }
         }
     });
 }

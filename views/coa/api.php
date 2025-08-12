@@ -1,8 +1,8 @@
 <?php
-require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../../config.php';
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
-spl_autoload_register(function ($c) { $f = __DIR__ . '/../classes/' . $c . '.php'; if (file_exists($f)) require_once $f; });
+spl_autoload_register(function ($c) { $f = __DIR__ . '/../../classes/' . $c . '.php'; if (file_exists($f)) require_once $f; });
 header('Content-Type: application/json');
 
 try { $db = Database::getInstance(); } catch (Exception $e) { http_response_code(500); echo json_encode(['status'=>'error','message'=>'DB init error']); exit; }

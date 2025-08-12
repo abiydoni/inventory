@@ -310,7 +310,7 @@ function openTambah() {
             formData.append('nama', document.getElementById('nama').value);
             formData.append('stok', document.getElementById('stok').value);
             formData.append('harga', document.getElementById('harga').value);
-            return fetch('api/stok.php', { method: 'POST', body: formData })
+            return fetch('views/stok/api.php', { method: 'POST', body: formData })
                 .then(r => r.json())
                 .catch(() => { Swal.showValidationMessage('Request error'); });
         }
@@ -326,7 +326,7 @@ function openTambah() {
 }
 
 function edit(id) {
-    fetch(`api/stok.php?action=get&id=${id}&token=<?php echo $csrf_token; ?>`)
+    fetch(`views/stok/api.php?action=get&id=${id}&token=<?php echo $csrf_token; ?>`)
         .then(r => r.json())
         .then(d => {
             if (!d || d.status === 'error') {
@@ -371,7 +371,7 @@ function edit(id) {
                     formData.append('nama', document.getElementById('nama').value);
                     formData.append('stok', document.getElementById('stok').value);
                     formData.append('harga', document.getElementById('harga').value);
-                    return fetch('api/stok.php', { method: 'POST', body: formData })
+                    return fetch('views/stok/api.php', { method: 'POST', body: formData })
                         .then(r => r.json())
                         .catch(() => { Swal.showValidationMessage('Request error'); });
                 }

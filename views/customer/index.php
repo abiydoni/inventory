@@ -256,7 +256,7 @@ function openTambah() {
             formData.append('telepon', document.getElementById('telepon').value);
             formData.append('email', document.getElementById('email').value);
             formData.append('alamat', document.getElementById('alamat').value);
-            return fetch('api/customer.php', { method: 'POST', body: formData })
+            return fetch('views/customer/api.php', { method: 'POST', body: formData })
                 .then(r => r.json())
                 .catch(() => { Swal.showValidationMessage('Request error'); });
         }
@@ -272,7 +272,7 @@ function openTambah() {
 }
 
 function edit(id) {
-    fetch(`api/customer.php?action=get&id=${id}&token=<?php echo $csrf_token; ?>`)
+    fetch(`views/customer/api.php?action=get&id=${id}&token=<?php echo $csrf_token; ?>`)
         .then(r => r.json())
         .then(d => {
             if (!d || d.status === 'error') {
@@ -322,7 +322,7 @@ function edit(id) {
                     formData.append('telepon', document.getElementById('telepon').value);
                     formData.append('email', document.getElementById('email').value);
                     formData.append('alamat', document.getElementById('alamat').value);
-                    return fetch('api/customer.php', { method: 'POST', body: formData })
+                    return fetch('views/customer/api.php', { method: 'POST', body: formData })
                         .then(r => r.json())
                         .catch(() => { Swal.showValidationMessage('Request error'); });
                 }

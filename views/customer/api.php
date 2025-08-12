@@ -1,6 +1,6 @@
 <?php
-// api/supplier.php - Endpoint JSON untuk modul supplier
-require_once __DIR__ . '/../config.php';
+// views/customer/api.php - Endpoint JSON untuk modul customer
+require_once __DIR__ . '/../../config.php';
 
 // Start session
 if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -9,7 +9,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 // Autoload classes
 spl_autoload_register(function ($class) {
-    $file = __DIR__ . '/../classes/' . $class . '.php';
+    $file = __DIR__ . '/../../classes/' . $class . '.php';
     if (file_exists($file)) require_once $file;
 });
 
@@ -34,7 +34,7 @@ try {
         }
         $id = (int)($_GET['id'] ?? 0);
         if ($id <= 0) throw new Exception('ID tidak valid');
-        $row = $db->fetch('SELECT * FROM supplier WHERE id = ?', [$id]);
+        $row = $db->fetch('SELECT * FROM customer WHERE id = ?', [$id]);
         if (!$row) throw new Exception('Data tidak ditemukan');
         echo json_encode($row);
         exit;
@@ -53,22 +53,22 @@ try {
             $email = $_POST['email'] ?? '';
             $alamat = $_POST['alamat'] ?? '';
             
-            if (!Helper::validateRequired($kode)) throw new Exception('Kode supplier wajib diisi');
-            if (!Helper::validateRequired($nama)) throw new Exception('Nama supplier wajib diisi');
+            if (!Helper::validateRequired($kode)) throw new Exception('Kode customer wajib diisi');
+            if (!Helper::validateRequired($nama)) throw new Exception('Nama customer wajib diisi');
             if (!empty($email) && !Helper::validateEmail($email)) throw new Exception('Format email tidak valid');
             if (!empty($telepon) && !Helper::validatePhone($telepon)) throw new Exception('Format telepon tidak valid');
             
-            $existing = $db->fetch('SELECT id FROM supplier WHERE kode = ?', [Helper::sanitize($kode)]);
-            if ($existing) throw new Exception('Kode supplier sudah digunakan');
+            $existing = $db->fetch('SELECT id FROM customer WHERE kode = ?', [Helper::sanitize($kode)]);
+            if ($existing) throw new Exception('Kode customer sudah digunakan');
             
-            $db->execute('INSERT INTO supplier (kode, nama, telepon, email, alamat) VALUES (?, ?, ?, ?, ?)', [
+            $db->execute('INSERT INTO customer (kode, nama, telepon, email, alamat) VALUES (?, ?, ?, ?, ?)', [
                 Helper::sanitize($kode),
                 Helper::sanitize($nama),
                 Helper::sanitize($telepon),
                 Helper::sanitize($email),
                 Helper::sanitize($alamat)
             ]);
-            echo json_encode(['status' => 'success', 'message' => 'Supplier berhasil ditambahkan']);
+            echo json_encode(['status' => 'success', 'message' => 'Customer berhasil ditambahkan']);
             exit;
         }
 
@@ -81,15 +81,15 @@ try {
             $alamat = $_POST['alamat'] ?? '';
             
             if ($id <= 0) throw new Exception('ID tidak valid');
-            if (!Helper::validateRequired($kode)) throw new Exception('Kode supplier wajib diisi');
-            if (!Helper::validateRequired($nama)) throw new Exception('Nama supplier wajib diisi');
+            if (!Helper::validateRequired($kode)) throw new Exception('Kode customer wajib diisi');
+            if (!Helper::validateRequired($nama)) throw new Exception('Nama customer wajib diisi');
             if (!empty($email) && !Helper::validateEmail($email)) throw new Exception('Format email tidak valid');
             if (!empty($telepon) && !Helper::validatePhone($telepon)) throw new Exception('Format telepon tidak valid');
             
-            $existing = $db->fetch('SELECT id FROM supplier WHERE kode = ? AND id != ?', [Helper::sanitize($kode), $id]);
-            if ($existing) throw new Exception('Kode supplier sudah digunakan');
+            $existing = $db->fetch('SELECT id FROM customer WHERE kode = ? AND id != ?', [Helper::sanitize($kode), $id]);
+            if ($existing) throw new Exception('Kode customer sudah digunakan');
             
-            $db->execute('UPDATE supplier SET kode = ?, nama = ?, telepon = ?, email = ?, alamat = ? WHERE id = ?', [
+            $db->execute('UPDATE customer SET kode = ?, nama = ?, telepon = ?, email = ?, alamat = ? WHERE id = ?', [
                 Helper::sanitize($kode),
                 Helper::sanitize($nama),
                 Helper::sanitize($telepon),
@@ -97,7 +97,7 @@ try {
                 Helper::sanitize($alamat),
                 $id
             ]);
-            echo json_encode(['status' => 'success', 'message' => 'Supplier berhasil diperbarui']);
+            echo json_encode(['status' => 'success', 'message' => 'Customer berhasil diperbarui']);
             exit;
         }
 

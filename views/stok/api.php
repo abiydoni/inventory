@@ -1,6 +1,6 @@
 <?php
-// api/stok.php - Endpoint JSON untuk modul stok
-require_once __DIR__ . '/../config.php';
+// views/stok/api.php - Endpoint JSON untuk modul stok
+require_once __DIR__ . '/../../config.php';
 
 // Start session
 if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -9,7 +9,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 // Autoload classes
 spl_autoload_register(function ($class) {
-    $file = __DIR__ . '/../classes/' . $class . '.php';
+    $file = __DIR__ . '/../../classes/' . $class . '.php';
     if (file_exists($file)) require_once $file;
 });
 

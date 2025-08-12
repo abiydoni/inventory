@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title><?php echo APP_NAME; ?> - Sistem Inventori Modern</title>
+    <title><?php echo APP_NAME; ?> - Sistem Inventori</title>
     
     <!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -43,7 +43,7 @@
     <?php
     // Pastikan variable $page tersedia
     $page = $_GET['page'] ?? 'dashboard';
-    $allowedPages = ['dashboard', 'stok', 'pembelian', 'penjualan', 'jurnal', 'laporan', 'profil'];
+    $allowedPages = ['dashboard', 'stok', 'customer', 'supplier', 'pembelian', 'penjualan', 'hutang', 'piutang', 'jurnal', 'laporan', 'profil', 'coa', 'settings'];
     if (!in_array($page, $allowedPages)) {
         $page = 'dashboard';
     }
@@ -82,7 +82,7 @@
                         <span class="font-medium">Customer</span>
                     </a>
                     <a href="?page=supplier" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors touch-button">
-                        <i class='bx bx-store text-xl'></i>
+                        <i class='bx bx-user text-xl'></i>
                         <span class="font-medium">Supplier</span>
                     </a>
                     <a href="?page=pembelian" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors touch-button">
@@ -117,13 +117,17 @@
                         <i class='bx bx-list-ul text-xl'></i>
                         <span class="font-medium">COA</span>
                     </a>
+                    <a href="?page=settings" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors touch-button">
+                        <i class='bx bx-cog text-xl'></i>
+                        <span class="font-medium">Settings</span>
+                    </a>
                 </nav>
                 
                 <!-- Footer -->
                 <div class="absolute bottom-6 left-6 right-6">
                     <div class="text-center text-sm text-gray-500">
                         <p>Version <?php echo APP_VERSION; ?></p>
-                        <p class="mt-1">© 2024 <?php echo APP_NAME; ?></p>
+                        <p class="mt-1">© 2025 <?php echo APP_NAME; ?> | <a href="#">appsBee</a></p>
                     </div>
                 </div>
             </div>
@@ -157,7 +161,7 @@
                             Customer
                         </a>
                         <a href="?page=supplier" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'supplier' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
-                            <i class='bx bx-truck text-xl mr-3'></i>
+                            <i class='bx bx-user text-xl mr-3'></i>
                             Supplier
                         </a>
                         <a href="?page=pembelian" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'pembelian' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
@@ -187,6 +191,10 @@
                         <a href="?page=coa" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'coa' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
                             <i class='bx bx-book-bookmark text-xl mr-3'></i>
                             COA
+                        </a>
+                        <a href="?page=settings" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'settings' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
+                            <i class='bx bx-cog text-xl mr-3'></i>
+                            Settings
                         </a>
                         <a href="?page=profil" class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 <?php echo $page == 'profil' ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'; ?>">
                             <i class='bx bx-building text-xl mr-3'></i>
@@ -222,11 +230,17 @@
                             $pageTitles = [
                                 'dashboard' => 'Dashboard',
                                 'stok' => 'Manajemen Stok',
+                                'customer' => 'Customer',
+                                'supplier' => 'Supplier',
                                 'pembelian' => 'Pembelian',
                                 'penjualan' => 'Penjualan',
+                                'hutang' => 'Hutang',
+                                'piutang' => 'Piutang',
                                 'jurnal' => 'Jurnal',
                                 'laporan' => 'Laporan',
-                                'profil' => 'Profil Perusahaan'
+                                'profil' => 'Profil Perusahaan',
+                                'coa' => 'Chart of Accounts',
+                                'settings' => 'Pengaturan COA'
                             ];
                             echo $pageTitles[$page] ?? 'Dashboard';
                             ?>

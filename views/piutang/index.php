@@ -1,5 +1,6 @@
 <?php
 // Halaman piutang: daftar piutang usaha dari penjualan kredit
+$csrf_token = Helper::generateCSRF();
 $search = $_GET['search'] ?? '';
 $status = $_GET['status'] ?? '';
 
@@ -204,7 +205,7 @@ function lihatDetail(id) {
         showConfirmButton: false,
         didOpen: () => {
             // Fetch detail penjualan
-            fetch(`api/penjualan.php?action=get&id=${id}`)
+            fetch(`views/penjualan/api.php?action=get&id=${id}`)
                 .then(r => r.json())
                 .then(data => {
                     if (data.status === 'success') {
@@ -254,34 +255,49 @@ function lihatDetail(id) {
 
 function terimaPembayaran(id) {
     Swal.fire({
-        title: 'Terima Pembayaran?',
-        text: 'Apakah Anda yakin ingin menandai piutang ini sebagai lunas?',
-        icon: 'question',
+        title: 'Terima Pembayaran',
+        html: `
+            <div class="text-left space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nominal</label>
+                <input type="number" id="nominal" min="1" class="w-full px-3 py-2 border rounded-lg" required>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Metode</label>
+                <select id="metode" class="w-full px-3 py-2 border rounded-lg">
+                  <option value="kas">Kas</option>
+                  <option value="bank">Bank</option>
+                </select>
+              </div>
+            </div>
+        `,
         showCancelButton: true,
-        confirmButtonText: 'Ya, Lunas',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
+        confirmButtonText: 'Terima',
+        cancelButtonText: 'Batal',
+        preConfirm: () => {
+            const nominal = parseInt(document.getElementById('nominal').value || '0', 10);
+            const metode = document.getElementById('metode').value;
+            if (!nominal || nominal <= 0) {
+              Swal.showValidationMessage('Nominal tidak valid');
+              return false;
+            }
             const formData = new FormData();
             formData.append('action', 'terima_pembayaran');
+            formData.append('csrf_token', '<?php echo $csrf_token; ?>');
             formData.append('id', id);
-            
-            fetch('api/penjualan.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    Swal.fire('Sukses', 'Pembayaran berhasil diterima', 'success')
-                        .then(() => location.reload());
-                } else {
-                    Swal.fire('Error', data.message || 'Gagal menerima pembayaran', 'error');
-                }
-            })
-            .catch(() => {
-                Swal.fire('Error', 'Terjadi kesalahan', 'error');
-            });
+            formData.append('nominal', nominal);
+            formData.append('metode', metode);
+            return fetch('views/penjualan/api.php', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .catch(() => { Swal.showValidationMessage('Request error'); });
+        }
+    }).then((res) => {
+        if (res.isConfirmed) {
+            if (res.value && res.value.status === 'success') {
+                Swal.fire('Sukses', res.value.message, 'success').then(() => location.reload());
+            } else {
+                Swal.fire('Error', (res.value && res.value.message) || 'Gagal menerima pembayaran', 'error');
+            }
         }
     });
 }
