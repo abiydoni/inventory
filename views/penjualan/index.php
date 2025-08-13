@@ -204,10 +204,15 @@ $customers = $db->fetchAll('SELECT id,kode,nama,alamat FROM customer ORDER BY na
       <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4">
         <i class='bx bx-edit text-blue-600 text-xl'></i>
       </div>
-      <div>
+      <div class="flex-1">
         <h2 class="text-2xl font-bold text-gray-900">Form Penjualan</h2>
         <p class="text-gray-600">Isi detail transaksi penjualan</p>
       </div>
+      
+      <!-- Debug Button -->
+      <button type="button" onclick="debugForm()" class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm font-medium transition-colors">
+        🐛 Debug Form
+      </button>
     </div>
     
     <!-- Basic Information -->
@@ -477,97 +482,202 @@ function hitungTotal(){
   document.getElementById('total_display').textContent = `Rp ${total.toLocaleString()}`;
 }
 
-// Form submission
-document.getElementById('penjualanForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  
-  if(items.length == 0) {
-    Swal.fire('Peringatan', 'Tambah item dulu', 'warning');
-    return;
-  }
-  
-  const customerId = document.getElementById('customer_id').value;
-  if(!customerId) {
-    Swal.fire('Peringatan', 'Pilih customer dulu', 'warning');
-    return;
-  }
-  
-  // Konfirmasi sebelum simpan
-  Swal.fire({
-    title: 'Konfirmasi Simpan',
-    text: 'Apakah Anda yakin ingin menyimpan transaksi penjualan ini?',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonColor: '#3b82f6',
-    cancelButtonColor: '#6b7280',
-    confirmButtonText: 'Ya, Simpan!',
-    cancelButtonText: 'Batal'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      // Show loading state
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin mr-3"></i>Menyimpan...';
-      submitBtn.disabled = true;
-      
-      const data = new FormData();
-      data.append('aksi', 'simpan');
-      data.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
-      data.append('tanggal', document.getElementById('tanggal').value || '');
-      data.append('customer_id', customerId);
-      data.append('jenis_pembayaran', document.getElementById('jenis_pembayaran').value);
-      data.append('diskon', document.getElementById('diskon').value || 0);
-      data.append('pajak', document.getElementById('pajak').value || 0);
-      data.append('items', JSON.stringify(items));
-      
-      fetch('', {method: 'POST', body: data})
-        .then(r => r.json())
-        .then(j => {
-          if(j.status == 'ok') {
-            // Show success notification
-            showNotification('success', 'Penjualan berhasil disimpan!', 'check-circle');
+// Form submission dengan debug logging
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('=== PENJUALAN PAGE LOADED ===');
+    
+    const form = document.getElementById('penjualanForm');
+    if (form) {
+        console.log('✅ Form penjualan found');
+        
+        // Remove existing event listeners
+        const newForm = form.cloneNode(true);
+        form.parentNode.replaceChild(newForm, form);
+        
+        // Add new event listener dengan debug
+        newForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('✅ Form submitted! Event listener working');
             
-            // Reset form
-            resetForm();
+            if(items.length == 0) {
+                console.log('❌ No items added');
+                Swal.fire('Peringatan', 'Tambah item dulu', 'warning');
+                return;
+            }
             
-            // Show success modal
+            const customerId = document.getElementById('customer_id').value;
+            if(!customerId) {
+                console.log('❌ No customer selected');
+                Swal.fire('Peringatan', 'Pilih customer dulu', 'warning');
+                return;
+            }
+            
+            console.log('✅ Validation passed, showing confirmation...');
+            
+            // Konfirmasi sebelum simpan
             Swal.fire({
-              icon: 'success',
-              title: 'Berhasil!',
-              text: j.message || 'Penjualan tersimpan',
-              confirmButtonColor: '#3b82f6'
+                title: 'Konfirmasi Simpan',
+                text: 'Apakah Anda yakin ingin menyimpan transaksi penjualan ini?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Simpan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    console.log('✅ User confirmed, preparing data...');
+                    
+                    // Show loading state
+                    const submitBtn = e.target.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="bx bx-loader-alt bx-spin mr-3"></i>Menyimpan...';
+                    submitBtn.disabled = true;
+                    
+                    const data = new FormData();
+                    data.append('aksi', 'simpan');
+                    data.append('csrf_token', document.querySelector('input[name="csrf_token"]').value);
+                    data.append('tanggal', document.getElementById('tanggal').value || '');
+                    data.append('customer_id', customerId);
+                    data.append('jenis_pembayaran', document.getElementById('jenis_pembayaran').value);
+                    data.append('diskon', document.getElementById('diskon').value || 0);
+                    data.append('pajak', document.getElementById('pajak').value || 0);
+                    data.append('items', JSON.stringify(items));
+                    
+                    console.log('✅ FormData prepared:', Object.fromEntries(data));
+                    console.log('✅ Sending fetch request...');
+                    
+                    fetch('', {method: 'POST', body: data})
+                        .then(r => {
+                            console.log('✅ Response received, status:', r.status);
+                            return r.json();
+                        })
+                        .then(j => {
+                            console.log('✅ JSON parsed:', j);
+                            
+                            if(j.status == 'ok') {
+                                console.log('✅ Success! Showing notifications...');
+                                
+                                // Show success notification
+                                showNotification('success', 'Penjualan berhasil disimpan!', 'check-circle');
+                                
+                                // Reset form
+                                resetForm();
+                                
+                                // Show success modal
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil!',
+                                    text: j.message || 'Penjualan tersimpan',
+                                    confirmButtonColor: '#10b981'
+                                });
+                            } else {
+                                console.log('❌ Error response:', j.message);
+                                
+                                // Show error notification
+                                showNotification('error', j.message || 'Gagal menyimpan penjualan', 'x-circle');
+                                
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal!',
+                                    text: j.message || 'Gagal menyimpan penjualan',
+                                    confirmButtonColor: '#ef4444'
+                                });
+                            }
+                        })
+                        .catch((error) => {
+                            console.log('❌ Fetch error:', error);
+                            
+                            // Show error notification
+                            showNotification('error', 'Kesalahan sistem', 'x-circle');
+                            
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Kesalahan Sistem',
+                                text: 'Tidak dapat terhubung ke server: ' + error.message,
+                                confirmButtonColor: '#ef4444'
+                            });
+                        })
+                        .finally(() => {
+                            console.log('✅ Restoring button state...');
+                            // Restore button state
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                        });
+                } else {
+                    console.log('ℹ️ User cancelled confirmation');
+                }
             });
-          } else {
-            // Show error notification
-            showNotification('error', j.message || 'Gagal menyimpan penjualan', 'x-circle');
-            
-            Swal.fire({
-              icon: 'error',
-              title: 'Gagal!',
-              text: j.message || 'Gagal menyimpan penjualan',
-              confirmButtonColor: '#ef4444'
-            });
-          }
-        })
-        .catch(() => {
-          // Show error notification
-          showNotification('error', 'Kesalahan sistem', 'x-circle');
-          
-          Swal.fire({
-            icon: 'error',
-            title: 'Kesalahan Sistem',
-            text: 'Tidak dapat terhubung ke server',
-            confirmButtonColor: '#ef4444'
-          });
-        })
-        .finally(() => {
-          // Restore button state
-          submitBtn.innerHTML = originalText;
-          submitBtn.disabled = false;
         });
+        
+        console.log('✅ Event listener added successfully');
+    } else {
+        console.log('❌ Form penjualan not found!');
     }
-  });
+    
+    // Test SweetAlert2
+    if (typeof Swal !== 'undefined') {
+        console.log('✅ SweetAlert2 loaded');
+    } else {
+        console.log('❌ SweetAlert2 not loaded');
+    }
+    
+    console.log('=== PENJUALAN PAGE INITIALIZED ===');
 });
+
+// Debug function untuk test form
+function debugForm() {
+    console.log('=== DEBUG FORM PENJUALAN ===');
+    
+    // Check form element
+    const form = document.getElementById('penjualanForm');
+    if (form) {
+        console.log('✅ Form found:', form);
+        console.log('✅ Form action:', form.action);
+        console.log('✅ Form method:', form.method);
+        console.log('✅ Form elements count:', form.elements.length);
+    } else {
+        console.log('❌ Form not found!');
+        return;
+    }
+    
+    // Check CSRF token
+    const csrfToken = document.querySelector('input[name="csrf_token"]');
+    if (csrfToken) {
+        console.log('✅ CSRF token found:', csrfToken.value);
+    } else {
+        console.log('❌ CSRF token not found!');
+    }
+    
+    // Check items
+    console.log('✅ Items array:', items);
+    console.log('✅ Items count:', items.length);
+    
+    // Check customer
+    const customerId = document.getElementById('customer_id').value;
+    console.log('✅ Customer ID:', customerId);
+    
+    // Check SweetAlert2
+    if (typeof Swal !== 'undefined') {
+        console.log('✅ SweetAlert2 loaded');
+        
+        // Test SweetAlert2
+        Swal.fire({
+            title: 'Debug Test',
+            text: 'SweetAlert2 berfungsi! Sekarang test form submission...',
+            icon: 'info',
+            confirmButtonColor: '#10b981'
+        }).then(() => {
+            // Test form submission
+            console.log('✅ Testing form submission...');
+            form.dispatchEvent(new Event('submit'));
+        });
+    } else {
+        console.log('❌ SweetAlert2 not loaded');
+    }
+    
+    console.log('=== DEBUG COMPLETED ===');
+}
 
 // Function to show notification
 function showNotification(type, message, icon) {
